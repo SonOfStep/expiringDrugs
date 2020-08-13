@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Expired Drugs
 // @name:ru Истекающие ЛС
-// @version 0.8
+// @version 0.8.1
 // @updateURL https://raw.githubusercontent.com/SonOfStep/expiringDrugs/master/index.js
 // @author Omar "SonOfStep" Nurmakhanov
 // @match *://172.30.149.11:8282/OE/appointment/remsandapps*
@@ -147,7 +147,8 @@ $(window).on("load", function(){
     "border":			"black solid 2px",
     "borderRadius":		"10px",
     "overflow":			"hidden",
-    "max-height": 		"500px"
+    "max-height": 		"500px",
+    "max-width": 		$(window).width()
   });
 
   $("#subdrugst option").each( (i) => { 
@@ -161,7 +162,6 @@ $(window).on("load", function(){
         $('.drugs-expired-soon__list li td').replaceWith(function(){
           return $("<span />", {html: $(this).html()});
         }); 
-        $('.drugs-expired-soon__list li').append("<hr/>")
       },
       error => {console.log(error)}
     )
@@ -169,10 +169,21 @@ $(window).on("load", function(){
   });
 
   $('#reset_filter_rems').trigger("click");
-
   
-  $(".drugs-expired-soon__btn").on("click", function(){
-    $(".drugs-expired-soon__btn").addClass("close");
+  if (localStorage.getItem("rollExpiredDrugs") == "true"){
+    $(".drugs-expired-soon").css({"max-height": "45px"});
+    $(".drugs-expired-soon").css({"max-width": "160px"});
+  }
+
+  $('.drugs-expired-soon__btn').toggle(function () {
+    $(".drugs-expired-soon").animate({"max-width": $(window).width()}, {duration: "400", easing: "swing"});
+    $(".drugs-expired-soon").animate({"max-height": "500px"}, {duration: "400", easing: "swing"});
+    $(".drugs-expired-soon__btn").text("Свернуть");
+    localStorage.setItem('rollExpiredDrugs', 'false');
+  }, function () {
     $(".drugs-expired-soon").animate({"max-height": "45px"}, {duration: "400", easing: "swing"});
-  })
+    $(".drugs-expired-soon").animate({"max-width": "160px"}, {duration: "400", easing: "swing"});
+    $(".drugs-expired-soon__btn").text("Развернуть");
+    localStorage.setItem('rollExpiredDrugs', 'true');
+  });
 });
