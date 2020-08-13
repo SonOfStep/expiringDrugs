@@ -2,7 +2,7 @@
 // @name Expired Drugs
 // @name:ru Истекающие ЛС
 // @version 0.8
-// @updateURL https://raw.githubusercontent.com/SonOfStep/MovingISLO/master/index.js
+// @updateURL https://raw.githubusercontent.com/SonOfStep/expiringDrugs/master/index.js
 // @author Omar "SonOfStep" Nurmakhanov
 // @match *://172.30.149.11:8282/OE/appointment/remsandapps*
 // @grant none
