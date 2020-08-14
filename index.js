@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Expired Drugs
 // @name:ru Истекающие ЛС
-// @version 0.8.2
+// @version 0.8.2.1
 // @updateURL https://raw.githubusercontent.com/SonOfStep/expiringDrugs/master/index.js
 // @author Omar "SonOfStep" Nurmakhanov
 // @match *://172.30.149.11:8282/OE/appointment/remsandapps*
@@ -183,7 +183,7 @@ $(window).on("load", function(){
   if (localStorage.getItem("rollExpiredDrugs") == "true"){
     $(".drugs-expired-soon").css({"max-height": "43px"});
     $(".drugs-expired-soon").css({"max-width": "155px"});
-
+	$(".drugs-expired-soon__list, .drugs-expired-soon__head").css({color: "#fff"});
   }
 
   $('.drugs-expired-soon__btn').toggle(function () {
@@ -197,7 +197,7 @@ $(window).on("load", function(){
     setTimeout( function(){
       $(".drugs-expired-soon").animate({"max-height": "43px"}, {duration: "400", easing: "swing"});
       $(".drugs-expired-soon").animate({"max-width": "155px"}, {duration: "400", easing: "swing"});
-    }, 400 );
+    }, 100 );
     $(".drugs-expired-soon__list, .drugs-expired-soon__head").animate({color: "#fff"}, {duration: 400});
     $(".drugs-expired-soon__btn").text("Развернуть");
     localStorage.setItem('rollExpiredDrugs', 'true');
