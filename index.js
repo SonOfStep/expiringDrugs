@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Expired Drugs
 // @name:ru Истекающие ЛС
-// @version 0.8.1
+// @version 0.8.2
 // @updateURL https://raw.githubusercontent.com/SonOfStep/expiringDrugs/master/index.js
 // @author Omar "SonOfStep" Nurmakhanov
 // @match *://172.30.149.11:8282/OE/appointment/remsandapps*
@@ -128,10 +128,10 @@ $(window).on("load", function(){
 
   $("body").append(`
 <div class='drugs-expired-soon'>
-<button class="drugs-expired-soon__btn">Свернуть</button>
 <h4 class="drugs-expired-soon__head">Список ЛС, у которых в скоро закончится срок годности</h4>
 <ol class="drugs-expired-soon__list">
 </ol>
+<button class="drugs-expired-soon__btn">Свернуть</button>
 </div>
 `);
   $(".drugs-expired-soon").css({
@@ -143,13 +143,23 @@ $(window).on("load", function(){
     "width": 			$(window).width() - 20,
     "backgroundColor": 	"#fff",
     "color": 			"#000",
-    "padding":			"5px 10px",
-    "border":			"black solid 2px",
-    "borderRadius":		"10px",
-    "overflow":			"hidden",
-    "max-height": 		"500px",
-    "max-width": 		$(window).width()
+    "padding":			"5px 10px 50px 10px",
+    "maxHeight": 		"500px",
+    "minHeight": 		"50px",
+    "maxWidth": 		$(window).width(),
+    "boxShadow": "0px 0px 10px 1px rgba(0,0,0,0.5)"
   });
+  $(".drugs-expired-soon__btn").css({ 
+    "outline": "none",
+    "width": "135px",
+    "text-shadow": "none",
+    "borderRadius": "0",
+    "position": "absolute",
+    "bottom": "10px",
+    "border": "2px solid #105dae",
+    "background": "#105dae",
+    "color": "#fff"
+  })
 
   $("#subdrugst option").each( (i) => { 
 
@@ -169,20 +179,26 @@ $(window).on("load", function(){
   });
 
   $('#reset_filter_rems').trigger("click");
-  
+
   if (localStorage.getItem("rollExpiredDrugs") == "true"){
-    $(".drugs-expired-soon").css({"max-height": "45px"});
-    $(".drugs-expired-soon").css({"max-width": "160px"});
+    $(".drugs-expired-soon").css({"max-height": "43px"});
+    $(".drugs-expired-soon").css({"max-width": "155px"});
+
   }
 
   $('.drugs-expired-soon__btn').toggle(function () {
     $(".drugs-expired-soon").animate({"max-width": $(window).width()}, {duration: "400", easing: "swing"});
     $(".drugs-expired-soon").animate({"max-height": "500px"}, {duration: "400", easing: "swing"});
+    setTimeout( function(){$(".drugs-expired-soon__list, .drugs-expired-soon__head").animate({color: "#000"}, 400)}, 600 ); 
     $(".drugs-expired-soon__btn").text("Свернуть");
     localStorage.setItem('rollExpiredDrugs', 'false');
   }, function () {
-    $(".drugs-expired-soon").animate({"max-height": "45px"}, {duration: "400", easing: "swing"});
-    $(".drugs-expired-soon").animate({"max-width": "160px"}, {duration: "400", easing: "swing"});
+
+    setTimeout( function(){
+      $(".drugs-expired-soon").animate({"max-height": "43px"}, {duration: "400", easing: "swing"});
+      $(".drugs-expired-soon").animate({"max-width": "155px"}, {duration: "400", easing: "swing"});
+    }, 400 );
+    $(".drugs-expired-soon__list, .drugs-expired-soon__head").animate({color: "#fff"}, {duration: 400});
     $(".drugs-expired-soon__btn").text("Развернуть");
     localStorage.setItem('rollExpiredDrugs', 'true');
   });
