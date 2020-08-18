@@ -161,7 +161,9 @@ $(window).on("load", function(){
     "color": "#fff"
   })
 
-  $("#subdrugst option").each( (i) => { 
+  $("#subdrugst option").each( (i) => {
+
+      setFilter();
 
     loadStorage($("#subdrugst option:nth-child(" + ( i + 1 ) +")").attr("value")).then(
       result => { 
