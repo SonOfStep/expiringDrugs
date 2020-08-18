@@ -180,12 +180,12 @@ $(window).on("load", function(){
                         $('.drugs-expired-soon__list li td').replaceWith(function(){
                             return $("<span />", {html: $(this).html()});
                         });
+                        $('#reset_filter_rems').trigger("click");
                     },
                     error => {console.log(error)}
                 )
 
             });
-            $('#reset_filter_rems').trigger("click");
         },
         error => console.log(error)
     );
