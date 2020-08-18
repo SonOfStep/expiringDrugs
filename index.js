@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Expired Drugs
 // @name:ru Истекающие ЛС
-// @version 0.8.2.1
+// @version 0.8.2.2
 // @updateURL https://raw.githubusercontent.com/SonOfStep/expiringDrugs/master/index.js
 // @author Omar "SonOfStep" Nurmakhanov
 // @match *://172.30.149.11:8282/OE/appointment/remsandapps*
@@ -124,7 +124,7 @@ $(window).on("load", function(){
     } ) 
   }
 
-  setFilter();
+  
 
   $("body").append(`
 <div class='drugs-expired-soon'>
@@ -176,9 +176,11 @@ $(window).on("load", function(){
       error => {console.log(error)}
     )
 
+	  $('#reset_filter_rems').trigger("click");
+	  
   });
 
-  $('#reset_filter_rems').trigger("click");
+  
 
   if (localStorage.getItem("rollExpiredDrugs") == "true"){
     $(".drugs-expired-soon").css({"max-height": "43px"});
