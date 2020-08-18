@@ -203,12 +203,11 @@ $(window).on("load", function(){
         $(".drugs-expired-soon__btn").text("Свернуть");
         localStorage.setItem('rollExpiredDrugs', 'false');
     }, function () {
-
         setTimeout( function(){
             $(".drugs-expired-soon").animate({"max-height": "43px"}, {duration: "400", easing: "swing"});
             $(".drugs-expired-soon").animate({"max-width": "155px"}, {duration: "400", easing: "swing"});
         }, 100 );
-        $(".drugs-expired-soon__list, .drugs-expired-soon__head").animate({color: "#fff"}, {duration: 400});
+        $(".drugs-expired-soon__list, .drugs-expired-soon__head").animate({color: "rgba(0,0,0,0)"}, {duration: 400});
         $(".drugs-expired-soon__btn").text("Развернуть");
         localStorage.setItem('rollExpiredDrugs', 'true');
     });
