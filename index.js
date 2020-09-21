@@ -10,12 +10,87 @@
 
 $(window).on("load", function(){
   "use strict";
+
+  $('head').append(`<style>
+.wrapper-text{
+margin: 5px 0;
+}
+.wrapper-list{
+margin: 5px 0;
+padding: 0;
+}
+.wrapper-block{
+padding: 5px 10px 50px 10px;  
+}
+
+.duration{
+display: flex;
+flex-direction: row;
+position: fixed;
+bottom: 5px;
+left: 10px;
+overflow: hidden;
+width: calc( 100vw - 40px );
+background-color:#fff;
+color: #000;
+max-width: calc(100vw);
+min-width: 155px;
+box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.5);
+}
+
+.duration__expires,
+.duration__expired{
+flex: 1 1 100%;
+padding: 0 10px;
+}
+
+.duration__list li:nth-child(2n){
+ background-color: #2196f3;
+ color: #fff;
+}
+.duration__list li span:nth-child(n+4){
+ display: none;
+}
+.duration__list li span:nth-child(3){
+ color: #d41d1a;
+}
+
+.duration__btns{
+position: absolute;
+bottom: 10px;
+left: 10px;
+}
+.duration__btn{
+text-shadow: none;
+border-radius: 0;
+outline: none;
+width: 135px;
+border: 2px solid #105dae;
+background: #105dae;
+color: #fff;
+}
+.duration__btn:hover{
+background: #105dae;
+}
+.duration__list{
+opacity: 1;
+max-height: 25vh;
+min-height: 65px;
+overflow-x: auto;
+overflow-y: none;
+list-style: decimal inside none;
+}
+</style>`);
+
   // Последнее число месяца
   function getLastDayOfMonth( year, month ){
     let date = new Date(year, month + 1, 0);
     return date.getDate();
   }
   
+  const dateNow =  ( new Date );
+  const dateEndNextMonth = new Date( dateNow.getFullYear(), dateNow.getMonth() + 2, dateNow.getDate() );
+
   function setFilter( start, end ){
 
     return new Promise( (resolve, reject) => {
@@ -23,15 +98,13 @@ $(window).on("load", function(){
       let dateNow =  ( new Date );
       let dateEndNextMonth = new Date( dateNow.getFullYear(), dateNow.getMonth() + 2, dateNow.getDate() );
 
-      if ( start == undefined ){
+      if ( ( start == undefined ) || ( start == "" ) ){
         start = "" + dateNow.getDate() + " " + getCustomMonth( dateNow.getMonth() ) + " " + dateNow.getFullYear();
       };
 
-      if ( end == undefined ){
+      if ( ( end == undefined ) || ( end == "" ) ){
         end = "" + dateEndNextMonth.getDate() + " " + getCustomMonth( dateEndNextMonth.getMonth() ) + " " + dateEndNextMonth.getFullYear();
       };
-
-      console.log(end);
 
       let request = $.ajax({
         'type': 'POST',
@@ -111,6 +184,8 @@ $(window).on("load", function(){
     }
   } // Функция возвращающая первые 3 буквы месяца, необходима для коректной установки фильтра времени
 
+
+
   function loadStorage( storage ){
     return new Promise( ( resolve, reject ) => {
       let request = $.ajax({
@@ -138,59 +213,67 @@ $(window).on("load", function(){
   }
 
   $("body").append(`
-    <div class='drugs-expired-soon'>
-    <small>C ${ new Date().getDate() } ${ getCustomMonth( new Date().getMonth() )} - до ${ new Date().getDate() } ${ getCustomMonth( new Date().getMonth() + 2 )}</small>
-    <h4 class="drugs-expired-soon__head">Список ЛС, у которых в скоро закончится срок годности</h4>
-    <ol class="drugs-expired-soon__list">
-    </ol>
-    <button class="drugs-expired-soon__btn">Свернуть</button>
-    </div>
-  `);
-  $(".drugs-expired-soon").css({
-    "display": 			"flex",
-    "flexDirection": 	"column",
-    "position": 		"fixed",
-    "bottom": 			"5px",
-    "left" : 			"10px",
-    "width": 			$(window).width() - 20,
-    "backgroundColor": 	"#fff",
-    "color": 			"#000",
-    "padding":			"5px 10px 50px 10px",
-    "maxHeight": 		"500px",
-    "minHeight": 		"65px",
-    "maxWidth": 		$(window).width(),
-    "boxShadow":        "0px 0px 10px 1px rgba(0,0,0,0.5)",
-    "overflow-x":        "none"
-  });
-  $(".drugs-expired-soon__btn").css({
-    "outline": "none",
-    "width": "135px",
-    "text-shadow": "none",
-    "borderRadius": "0",
-    "position": "absolute",
-    "bottom": "10px",
-    "border": "2px solid #105dae",
-    "background": "#105dae",
-    "color": "#fff"
-  })
+<div class='duration wrapper-block hide'>
+<div class="duration__expires">
+<small class="duration__period wrapper-text">С ${ (new Date).getDate() } ${ getCustomMonth( (new Date).getMonth() ) } по ${ (new Date).getDate() } ${ getCustomMonth( ( new Date( (new Date).getFullYear(), (new Date).getMonth() + 2, (new Date).getDate() ) ).getMonth() ) }</small>
+<h4 class="duration__head wrapper-text">Список ЛС, у которых скоро закончится срок годности</h4>
+<ol class="duration__list wrapper-list">
+</ol>
+</div>
+<div class="duration__expired">
+<small class="duration__period wrapper-text">По ${ (new Date).getDate() } ${ getCustomMonth( (new Date).getMonth() ) }</small>
+<h4 class="duration__head wrapper-text">Список ЛС, у которых закончился срок действия</h4>
+<ol class="duration__list wrapper-list">
+</ol>
+</div>
+<div class="duration__btns">
+<button id="collapse" class="duration__btn">Свернуть</button>
+<button id="toggle" class="duration__btn">Сменить</button>  
+</div>  
+</div>
+`);
+
+$(".duration__expired").toggle(); // Скрываю список ЛС с истекшей датой хранения
 
   setFilter().then(
     result => {
-
-      console.log(result);
 
       $("#subdrugst option").each( (i) => {
 
         loadStorage($("#subdrugst option:nth-child(" + ( i + 1 ) +")").attr("value")).then(
           result => {
-            $("ol.drugs-expired-soon__list").append(result);
-            $('.drugs-expired-soon__list tr').replaceWith(function(){
+            $(".duration__expires .duration__list").append(result);
+            $('.duration__expires .duration__list tr').replaceWith(function(){
               return $("<li />", {html: $(this).html()});
             });
-            $('.drugs-expired-soon__list li td').replaceWith(function(){
+            $('.duration__expires .duration__list li td').replaceWith(function(){
               return $("<span />", {html: $(this).html()});
             });
             $('#reset_filter_rems').trigger("click");
+
+            setFilter("1 Фев 2020", "" + dateNow.getDate() + " " + getCustomMonth( dateNow.getMonth() ) + " " + dateNow.getFullYear()).then(
+              result => {
+
+                $("#subdrugst option").each( (i) => {
+
+                  loadStorage($("#subdrugst option:nth-child(" + ( i + 1 ) +")").attr("value")).then(
+                    result => {
+                      $(".duration__expired .duration__list").append(result);
+                      $('.duration__expired .duration__list tr').replaceWith(function(){
+                        return $("<li />", {html: $(this).html()});
+                      });
+                      $('.duration__expired .duration__list li td').replaceWith(function(){
+                        return $("<span />", {html: $(this).html()});
+                      });
+                      $('#reset_filter_rems').trigger("click");
+                    },
+                    error => {console.log(error)}
+                  )
+
+                });
+              },
+              error => console.log(error)
+            );
           },
           error => {console.log(error)}
         )
@@ -200,26 +283,30 @@ $(window).on("load", function(){
     error => console.log(error)
   );
 
+
+
+
   if (localStorage.getItem("rollExpiredDrugs") == "true"){
-    $(".drugs-expired-soon").css({"max-height": "43px"});
-    $(".drugs-expired-soon").css({"max-width": "155px"});
-    $(".drugs-expired-soon__list, .drugs-expired-soon__head").css({color: "rgba(0,0,0,0)"});
+    $(".drugs-expired-soon__head").hide();
+    $(".drugs-expired-soon__list").hide();
+    $(".duration__btn#collapse").text("Развернуть");
   }
 
-  $('.drugs-expired-soon__btn').toggle(function () {
-    $(".drugs-expired-soon").animate({"max-width": $(window).width()}, {duration: "400", easing: "swing"});
-    $(".drugs-expired-soon").animate({"max-height": "500px"}, {duration: "400", easing: "swing"});
-    setTimeout( function(){$(".drugs-expired-soon__list, .drugs-expired-soon__head").animate({color: "#000"}, 400)}, 600 );
-    $(".drugs-expired-soon__btn").text("Свернуть");
-    localStorage.setItem('rollExpiredDrugs', 'false');
-  }, function () {
+  $(".duration__btn#collapse").on("click", () => {
+    $(".duration__head").toggle();
+    $(".duration__list").toggle();
+    if ( $(".duration__list").css("display") === "none" ) {
+      $(".duration__btn#collapse").text("Развернуть");
+      localStorage.setItem("rollExpiredDrugs", "true");      
+    } else {
+      $(".duration__btn#collapse").text("Свернуть");
+      localStorage.setItem("rollExpiredDrugs", "false");
+    };
 
-    setTimeout( function(){
-      $(".drugs-expired-soon").animate({"max-height": "65px"}, {duration: "400", easing: "swing"});
-      $(".drugs-expired-soon").animate({"max-width": "155px"}, {duration: "400", easing: "swing"});
-    }, 100 );
-    $(".drugs-expired-soon__list, .drugs-expired-soon__head").animate({color: "rgba(0,0,0,0)"}, {duration: 400});
-    $(".drugs-expired-soon__btn").text("Развернуть");
-    localStorage.setItem('rollExpiredDrugs', 'true');
-  });
+  })
+  
+  $(".duration__btn#toggle").on('click', () => {
+    $(".duration__expires").toggle();
+    $(".duration__expired").toggle()
+  })
 });
