@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Expired Drugs
 // @name:ru Истекающие ЛС
-// @version 0.8.4
+// @version 0.8.5
 // @updateURL https://raw.githubusercontent.com/SonOfStep/expiringDrugs/master/index.js
 // @author Omar "SonOfStep" Nurmakhanov
 // @match *://172.30.149.11:8282/OE/appointment/remsandapps*
@@ -287,8 +287,8 @@ $(".duration__expired").toggle(); // Скрываю список ЛС с ист�
 
 
   if (localStorage.getItem("rollExpiredDrugs") == "true"){
-    $(".drugs-expired-soon__head").hide();
-    $(".drugs-expired-soon__list").hide();
+    $(".duration__head").hide();
+    $(".duration__list").hide();
     $(".duration__btn#collapse").text("Развернуть");
   }
 
