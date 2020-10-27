@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Expired Drugs
 // @name:ru Истекающие ЛС
-// @version 0.8.5
+// @version 0.8.6
 // @updateURL https://raw.githubusercontent.com/SonOfStep/expiringDrugs/master/index.js
 // @author Omar "SonOfStep" Nurmakhanov
 // @match *://172.30.149.11:8282/OE/appointment/remsandapps*
@@ -45,14 +45,14 @@ padding: 0 10px;
 }
 
 .duration__list li:nth-child(2n){
- background-color: #2196f3;
- color: #fff;
+background-color: #2196f3;
+color: #fff;
 }
 .duration__list li span:nth-child(n+4){
- display: none;
+display: none;
 }
 .duration__list li span:nth-child(3){
- color: #d41d1a;
+color: #d41d1a;
 }
 
 .duration__btns{
@@ -87,7 +87,7 @@ list-style: decimal inside none;
     let date = new Date(year, month + 1, 0);
     return date.getDate();
   }
-  
+
   const dateNow =  ( new Date );
   const dateEndNextMonth = new Date( dateNow.getFullYear(), dateNow.getMonth() + 2, dateNow.getDate() );
 
@@ -233,7 +233,7 @@ list-style: decimal inside none;
 </div>
 `);
 
-$(".duration__expired").toggle(); // Скрываю список ЛС с истекшей датой хранения
+  $(".duration__expired").toggle(); // Скрываю список ЛС с истекшей датой хранения
 
   setFilter().then(
     result => {
@@ -289,6 +289,7 @@ $(".duration__expired").toggle(); // Скрываю список ЛС с ист�
   if (localStorage.getItem("rollExpiredDrugs") == "true"){
     $(".duration__head").hide();
     $(".duration__list").hide();
+    $('.duration').css({'width': '300px'})
     $(".duration__btn#collapse").text("Развернуть");
   }
 
@@ -297,14 +298,16 @@ $(".duration__expired").toggle(); // Скрываю список ЛС с ист�
     $(".duration__list").toggle();
     if ( $(".duration__list").css("display") === "none" ) {
       $(".duration__btn#collapse").text("Развернуть");
+      $('.duration').css({'width': '300px'})
       localStorage.setItem("rollExpiredDrugs", "true");      
     } else {
       $(".duration__btn#collapse").text("Свернуть");
+      $('.duration').css({'width': 'calc( 100vw - 40px )'})
       localStorage.setItem("rollExpiredDrugs", "false");
     };
 
   })
-  
+
   $(".duration__btn#toggle").on('click', () => {
     $(".duration__expires").toggle();
     $(".duration__expired").toggle()
