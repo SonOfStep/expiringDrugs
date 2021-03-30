@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Expired Drugs
 // @name:ru Истекающие ЛС
-// @version 0.8.6
+// @version 0.8.7
 // @updateURL https://raw.githubusercontent.com/SonOfStep/expiringDrugs/master/index.js
 // @author Omar "SonOfStep" Nurmakhanov
 // @match *://172.30.149.11:8282/OE/appointment/remsandapps*
@@ -9,9 +9,9 @@
 // ==/UserScript==
 
 $(window).on("load", function(){
-  "use strict";
-
-  $('head').append(`<style>
+    "use strict";
+/*Стили для формы вывода*/
+    $('head').append(`<style>
 .wrapper-text{
 margin: 5px 0;
 }
@@ -20,7 +20,7 @@ margin: 5px 0;
 padding: 0;
 }
 .wrapper-block{
-padding: 5px 10px 50px 10px;  
+padding: 5px 10px 50px 10px;
 }
 
 .duration{
@@ -82,137 +82,143 @@ list-style: decimal inside none;
 }
 </style>`);
 
-  // Последнее число месяца
-  function getLastDayOfMonth( year, month ){
-    let date = new Date(year, month + 1, 0);
-    return date.getDate();
-  }
-
-  const dateNow =  ( new Date );
-  const dateEndNextMonth = new Date( dateNow.getFullYear(), dateNow.getMonth() + 2, dateNow.getDate() );
-
-  function setFilter( start, end ){
-
-    return new Promise( (resolve, reject) => {
-
-      let dateNow =  ( new Date );
-      let dateEndNextMonth = new Date( dateNow.getFullYear(), dateNow.getMonth() + 2, dateNow.getDate() );
-
-      if ( ( start == undefined ) || ( start == "" ) ){
-        start = "" + dateNow.getDate() + " " + getCustomMonth( dateNow.getMonth() ) + " " + dateNow.getFullYear();
-      };
-
-      if ( ( end == undefined ) || ( end == "" ) ){
-        end = "" + dateEndNextMonth.getDate() + " " + getCustomMonth( dateEndNextMonth.getMonth() ) + " " + dateEndNextMonth.getFullYear();
-      };
-
-      let request = $.ajax({
-        'type': 'POST',
-        url: '/OE/appointment/getremainsbynursefilter',
-        data:{
-          lsname: $('#lsname_rems').val(),
-          series: $('#series_rems').val(),
-          party: $('#party_rems').val(),
-          budget: $('#budget_rems').val(),
-          dateb: start,
-          datee: end,
-          YII_CSRF_TOKEN: YII_CSRF_TOKEN
-        }
-      });
-
-      request.done( msg => { resolve(msg) });
-      request.fail( msg => { reject(msg) });
-
-    } )
-  }//Установка фильтра
-
-  function getCustomMonth( num ){
-    let months = [
-      'Янв',
-      'Фев',
-      'Мар',
-      'Апр',
-      'Май',
-      'Июн',
-      'Июл',
-      'Авг',
-      'Сен',
-      'Окт',
-      'Ноя',
-      'Дек',
-    ];
-
-    switch (num){
-      case 0 :
-        return months[num];
-        break;
-      case 1 :
-        return months[num];
-        break;
-      case 2 :
-        return months[num];
-        break;
-      case 3 :
-        return months[num];
-        break;
-      case 4 :
-        return months[num];
-        break;
-      case 5 :
-        return months[num];
-        break;
-      case 6 :
-        return months[num];
-        break;
-      case 7 :
-        return months[num];
-        break;
-      case 8 :
-        return months[num];
-        break;
-      case 9 :
-        return months[num];
-        break;
-      case 10 :
-        return months[num];
-        break;
-      case 11 :
-        return months[num];
-        break;
-      default:
-        return NaN;
+    // Последнее число месяца
+    function getLastDayOfMonth( year, month ){
+        let date = new Date(year, month + 1, 0);
+        return date.getDate();
     }
-  } // Функция возвращающая первые 3 буквы месяца, необходима для коректной установки фильтра времени
 
+    const dateNow = ( new Date );
+    const currentDate = "" + dateNow.getDate() + " " + getCustomMonth( dateNow.getMonth() ) + " " + dateNow.getFullYear()
+    const dateEndNextMonth = new Date( dateNow.getFullYear(), dateNow.getMonth() + 2, dateNow.getDate() );
 
+    /**
+    * Эта функция устанавливает фильтр для поиска ЛС
+    * @param {string} start - начальная дата в формате d mmm yyyy
+    * @param {string} end - конечная дата в формате d mmm yyyy
+    */
+    function setFilter( start, end ){
 
-  function loadStorage( storage ){
-    return new Promise( ( resolve, reject ) => {
-      let request = $.ajax({
-        'type':'POST',
-        url: baseUrl+'/appointment/getremainsbynurse',
-        'data': {
-          userstorid: storage,
-          num: 1,
-          flag: flag_rems,
-          asc: 1,
-          count: 100,
-          YII_CSRF_TOKEN: YII_CSRF_TOKEN
+        return new Promise( (resolve, reject) => {
+
+            let dateNow =  ( new Date );
+            let dateEndNextMonth = new Date( dateNow.getFullYear(), dateNow.getMonth() + 2, dateNow.getDate() );
+
+            if ( ( start == undefined ) || ( start == "" ) ){
+                start = "" + dateNow.getDate() + " " + getCustomMonth( dateNow.getMonth() ) + " " + dateNow.getFullYear();
+            };
+
+            if ( ( end == undefined ) || ( end == "" ) ){
+                end = "" + dateEndNextMonth.getDate() + " " + getCustomMonth( dateEndNextMonth.getMonth() ) + " " + dateEndNextMonth.getFullYear();
+            };
+
+            let request = $.ajax({
+                'type': 'POST',
+                url: '/OE/appointment/getremainsbynursefilter',
+                data:{
+                    lsname: $('#lsname_rems').val(),
+                    series: $('#series_rems').val(),
+                    party: $('#party_rems').val(),
+                    budget: $('#budget_rems').val(),
+                    dateb: start,
+                    datee: end,
+                    YII_CSRF_TOKEN: YII_CSRF_TOKEN
+                }
+            });
+
+            request.done( msg => { resolve(msg) });
+            request.fail( msg => { reject(msg) });
+
+        } )
+    }//Установка фильтра
+
+    function getCustomMonth( num ){
+        let months = [
+            'Янв',
+            'Фев',
+            'Мар',
+            'Апр',
+            'Май',
+            'Июн',
+            'Июл',
+            'Авг',
+            'Сен',
+            'Окт',
+            'Ноя',
+            'Дек',
+        ];
+
+        switch (num){
+            case 0 :
+                return months[num];
+                break;
+            case 1 :
+                return months[num];
+                break;
+            case 2 :
+                return months[num];
+                break;
+            case 3 :
+                return months[num];
+                break;
+            case 4 :
+                return months[num];
+                break;
+            case 5 :
+                return months[num];
+                break;
+            case 6 :
+                return months[num];
+                break;
+            case 7 :
+                return months[num];
+                break;
+            case 8 :
+                return months[num];
+                break;
+            case 9 :
+                return months[num];
+                break;
+            case 10 :
+                return months[num];
+                break;
+            case 11 :
+                return months[num];
+                break;
+            default:
+                return NaN;
         }
-      });
+    } // Функция возвращающая первые 3 буквы месяца, необходима для коректной установки фильтра времени
 
-      request.done( msg => {
-        resolve( msg )
-      });
 
-      request.fail( msg => {
-        reject( msg )
-      });
 
-    } )
-  }
+    function loadStorage( storage ){
+        return new Promise( ( resolve, reject ) => {
+            let request = $.ajax({
+                'type':'POST',
+                url: baseUrl+'/appointment/getremainsbynurse',
+                'data': {
+                    userstorid: storage,
+                    num: 1,
+                    flag: flag_rems,
+                    asc: 1,
+                    count: 100,
+                    YII_CSRF_TOKEN: YII_CSRF_TOKEN
+                }
+            });
 
-  $("body").append(`
+            request.done( msg => {
+                resolve( msg )
+            });
+
+            request.fail( msg => {
+                reject( msg )
+            });
+
+        } )
+    }
+
+    $("body").append(`
 <div class='duration wrapper-block hide'>
 <div class="duration__expires">
 <small class="duration__period wrapper-text">С ${ (new Date).getDate() } ${ getCustomMonth( (new Date).getMonth() ) } по ${ (new Date).getDate() } ${ getCustomMonth( ( new Date( (new Date).getFullYear(), (new Date).getMonth() + 2, (new Date).getDate() ) ).getMonth() ) }</small>
@@ -228,88 +234,89 @@ list-style: decimal inside none;
 </div>
 <div class="duration__btns">
 <button id="collapse" class="duration__btn">Свернуть</button>
-<button id="toggle" class="duration__btn">Сменить</button>  
-</div>  
+<button id="toggle" class="duration__btn">Сменить</button>
+</div>
 </div>
 `);
 
-  $(".duration__expired").toggle(); // Скрываю список ЛС с истекшей датой хранения
+    $(".duration__expired").toggle(); // Скрываю список ЛС с истекшей датой хранения
 
-  setFilter().then(
-    result => {
+    setFilter().then(
+        result => {
 
-      $("#subdrugst option").each( (i) => {
+            $("#subdrugst option").each( (i) => {
 
-        loadStorage($("#subdrugst option:nth-child(" + ( i + 1 ) +")").attr("value")).then(
-          result => {
-            $(".duration__expires .duration__list").append(result);
-            $('.duration__expires .duration__list tr').replaceWith(function(){
-              return $("<li />", {html: $(this).html()});
-            });
-            $('.duration__expires .duration__list li td').replaceWith(function(){
-              return $("<span />", {html: $(this).html()});
-            });
-            $('#reset_filter_rems').trigger("click");
-
-            setFilter("1 Фев 2020", "" + dateNow.getDate() + " " + getCustomMonth( dateNow.getMonth() ) + " " + dateNow.getFullYear()).then(
-              result => {
-
-                $("#subdrugst option").each( (i) => {
-
-                  loadStorage($("#subdrugst option:nth-child(" + ( i + 1 ) +")").attr("value")).then(
+                loadStorage($("#subdrugst option:nth-child(" + ( i + 1 ) +")").attr("value")).then(
                     result => {
-                      $(".duration__expired .duration__list").append(result);
-                      $('.duration__expired .duration__list tr').replaceWith(function(){
-                        return $("<li />", {html: $(this).html()});
-                      });
-                      $('.duration__expired .duration__list li td').replaceWith(function(){
-                        return $("<span />", {html: $(this).html()});
-                      });
-                      $('#reset_filter_rems').trigger("click");
+
+                        $(".duration__expires .duration__list").append(result);
+                        $('.duration__expires .duration__list tr').replaceWith(function(){
+                            return $("<li />", {html: $(this).html()});
+                        });
+                        $('.duration__expires .duration__list li td').replaceWith(function(){
+                            return $("<span />", {html: $(this).html()});
+                        });
+                        $('#reset_filter_rems').trigger("click");
+
+                        setFilter("1 Фев 2020", currentDate ).then(
+                            result => {
+
+                                $("#subdrugst option").each( (i) => {
+
+                                    loadStorage($("#subdrugst option:nth-child(" + ( i + 1 ) +")").attr("value")).then(
+                                        result => {
+                                            $(".duration__expired .duration__list").append(result);
+                                            $('.duration__expired .duration__list tr').replaceWith(function(){
+                                                return $("<li />", {html: $(this).html()});
+                                            });
+                                            $('.duration__expired .duration__list li td').replaceWith(function(){
+                                                return $("<span />", {html: $(this).html()});
+                                            });
+                                            $('#reset_filter_rems').trigger("click");
+                                        },
+                                        error => {console.log(error)}
+                                    )
+
+                                });
+                            },
+                            error => console.log(error)
+                        );
                     },
                     error => {console.log(error)}
-                  )
+                )
 
-                });
-              },
-              error => console.log(error)
-            );
-          },
-          error => {console.log(error)}
-        )
-
-      });
-    },
-    error => console.log(error)
-  );
+            });
+        },
+        error => console.log(error)
+    );
 
 
 
 
-  if (localStorage.getItem("rollExpiredDrugs") == "true"){
-    $(".duration__head").hide();
-    $(".duration__list").hide();
-    $('.duration').css({'width': '300px'})
-    $(".duration__btn#collapse").text("Развернуть");
-  }
+    if (localStorage.getItem("rollExpiredDrugs") == "true"){
+        $(".duration__head").hide();
+        $(".duration__list").hide();
+        $('.duration').css({'width': '300px'})
+        $(".duration__btn#collapse").text("Развернуть");
+    }
 
-  $(".duration__btn#collapse").on("click", () => {
-    $(".duration__head").toggle();
-    $(".duration__list").toggle();
-    if ( $(".duration__list").css("display") === "none" ) {
-      $(".duration__btn#collapse").text("Развернуть");
-      $('.duration').css({'width': '300px'})
-      localStorage.setItem("rollExpiredDrugs", "true");      
-    } else {
-      $(".duration__btn#collapse").text("Свернуть");
-      $('.duration').css({'width': 'calc( 100vw - 40px )'})
-      localStorage.setItem("rollExpiredDrugs", "false");
-    };
+    $(".duration__btn#collapse").on("click", () => {
+        $(".duration__head").toggle();
+        $(".duration__list").toggle();
+        if ( $(".duration__list").css("display") === "none" ) {
+            $(".duration__btn#collapse").text("Развернуть");
+            $('.duration').css({'width': '300px'})
+            localStorage.setItem("rollExpiredDrugs", "true");
+        } else {
+            $(".duration__btn#collapse").text("Свернуть");
+            $('.duration').css({'width': 'calc( 100vw - 40px )'})
+            localStorage.setItem("rollExpiredDrugs", "false");
+        };
 
-  })
+    })
 
-  $(".duration__btn#toggle").on('click', () => {
-    $(".duration__expires").toggle();
-    $(".duration__expired").toggle()
-  })
+    $(".duration__btn#toggle").on('click', () => {
+        $(".duration__expires").toggle();
+        $(".duration__expired").toggle()
+    })
 });
